@@ -8,11 +8,41 @@
         </style>
     </head>
 
+    <script type="text/javascript">
+        function editToDo(index) {
+            // get the element
+            var toDoItem = document.getElementById("todo-item-" + index);
+            var toDoItemContent = document.getElementById("todo-item-" + index + "-content")
+
+            // hide the element  
+            toDoItem.style.visibility = "hidden";
+
+            // insert a form where the element used to be
+            var editElementForm = document.createElement("form");
+            editElementForm.setAttribute('method', 'post'); 
+            editElementForm.setAttribute('action', '/todo/edit/' + index);
+
+            var editElementInput = document.createElement("input");
+            editElementInput.setAttribute('type', 'text');
+            editElementInput.setAttribute('name', 'editedtodo');
+            editElementInput.setAttribute('value', toDoItemContent.innerHTML);
+
+            var editElementSubmit = document.createElement("input");
+            editElementSubmit.setAttribute('type', 'submit');
+            editElementSubmit.setAttribute('value', 'Save Edit');
+
+            editElementForm.appendChild(editElementInput);
+            editElementForm.appendChild(editElementSubmit);
+
+            toDoItem.parentNode.insertBefore(editElementForm, toDoItem);
+        }
+    </script>
+
     <body>
         <h1>My todolist</h1>
         <ul>
         <% todolist.forEach(function(todo, index) { %>
-            <li><a href="/todo/delete/<%= index %>">✘</a> <%- todo %></li>
+        <li id="todo-item-<%= index %>"><a href="/todo/delete/<%= index %>">✘</a><span id="todo-item-<%= index %>-content"> <%- todo %> </span><a href="#" onclick="editToDo(<%= index %>)">&#9998;</a></li>
         <% }); %>
         </ul>
 
