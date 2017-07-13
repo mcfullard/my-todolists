@@ -78,6 +78,20 @@ describe('To-Do Lists', function() {
 				done();	
 			});
 	});
+	it('should escape all user input to avoid XSS vulnerabilities', function(done){
+		var chaiRequest = chai.request(server);
+		addItems(
+			chaiRequest,
+			['<script type="text/javascript">window.location="http://www.google.com"</script>'],
+			function(err, res) {
+				res.should.have.status(200);
+				res.text.should.be.a('string');
+				res.text.should.not.have.string('<script type="text/javascript">window.location="http://www.google.com"</script>');
+				res.text.should.have.string('&lt;script type=&#34;text/javascript&#34;&gt;window.location=&#34;http://www.google.com&#34;&lt;/script&gt;');
+				done();
+			}
+		);	
+	});
 });
 
 function addItems(chaiRequest, items, callback) {

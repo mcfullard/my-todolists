@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const sanitizer = require('sanitizer');
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.get('/todo', function(req, res) {
 /* Adding an item to the to do list */
 .post('/todo/add/', urlencodedParser, function(req, res) {
     if (req.body.newtodo != '') {
-        todolist.push(req.body.newtodo);
+        todolist.push(sanitizer.escape(req.body.newtodo));
     }
     res.redirect('/todo');
 })
@@ -30,7 +31,7 @@ app.get('/todo', function(req, res) {
 /* Edit an item from the to do list */
 .post('/todo/edit/:id', urlencodedParser, function(req, res) {
     if (req.params.id != '' && req.body.editedtodo != '') {
-        todolist[req.params.id] = req.body.editedtodo;
+        todolist[req.params.id] = sanitizer.escape(req.body.editedtodo);
     }
     res.redirect('/todo');
 })
