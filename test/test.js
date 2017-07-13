@@ -20,11 +20,11 @@ describe('To-Do Lists', function() {
 		var chaiRequest = chai.request(server);
 		addItems(
 			chaiRequest,
-			['testToDoItem'], 
+			['firstItem'], 
 			function(err, res) {
                 res.should.have.status(200);
                 res.text.should.be.a('string');
-                res.text.should.have.string('testToDoItem');
+                res.text.should.have.string('firstItem');
                 done();
 			}
         );
@@ -33,7 +33,7 @@ describe('To-Do Lists', function() {
 		var chaiRequest = chai.request(server);
 		addItems(
 			chaiRequest,
-			['firstItem', 'secondItem'],
+			['secondItem', 'thirdItem'],
 			() => {}	
 		);	
 		chaiRequest
@@ -41,13 +41,43 @@ describe('To-Do Lists', function() {
 		.end(function(err, res) {
 			res.should.have.status(200);
 			res.text.should.be.a('string');
-			res.text.should.not.have.string('firstItem');
-			res.text.should.have.string('secondItem');
+			res.text.should.not.have.string('secondItem');
+			res.text.should.have.string('thirdItem');
 			done();
 		});
 	}); 
-	it('should replace the item with id in the list with the item passed as parameter editedtodo when /todo/edit/:id is called'); 
-	it('should redirect to /todo if page not found');
+	it('should replace the item with id when /todo/edit/:id POST is called', function(done) {
+		var chaiRequest = chai.request(server);
+		addItems(
+			chaiRequest,
+			['fourthItem', 'fifthItem'],
+			() => {}	
+		);	
+		chaiRequest
+		.post('/todo/edit/0')
+		.type('form')
+		.send({editedtodo: 'sixthItem'})
+		.end(function(err, res) {
+			res.should.have.status(200);	
+			res.text.should.be.a('string');
+			res.text.should.not.have.string('fourthItem');
+			res.text.should.have.string('sixthItem');
+			res.text.should.have.string('fifthItem');
+			done();
+		});
+	}); 
+	it('should redirect to /todo on /nonsensepath GET', function(done){
+		chai.request(server)
+			.get('/nonsensepath')
+			.end(function(err, res){
+				res.should.have.status(200);
+                res.text.should.be.a('string');
+                res.text.should.have.string('<title>My todolist</title>');
+                res.text.should.have.string('<h1>My todolist</h1>');
+				res.redirects[0].should.match(/\/todo$/);
+				done();	
+			});
+	});
 });
 
 function addItems(chaiRequest, items, callback) {
