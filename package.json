@@ -7,5 +7,14 @@
     "express": "^4.14.0"
   },
   "author": "riaan@entersekt.com",
-  "description": "Basic to do list exercise"
+  "description": "Basic to do list exercise",
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.4.2"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha"
+  }
 }
