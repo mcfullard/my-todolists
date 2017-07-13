@@ -29,7 +29,7 @@ app.get('/todo', function(req, res) {
 
 /* Edit an item from the to do list */
 .post('/todo/edit/:id', urlencodedParser, function(req, res) {
-    if (req.params.id != '') {
+    if (req.params.id != '' && req.body.editedtodo != '') {
         todolist[req.params.id] = req.body.editedtodo;
     }
     res.redirect('/todo');
@@ -41,3 +41,5 @@ app.get('/todo', function(req, res) {
 })
 
 .listen(8080);
+
+module.exports = app;
