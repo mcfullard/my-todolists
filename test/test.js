@@ -34,19 +34,17 @@ describe('To-Do Lists', function() {
 		addItems(
 			chaiRequest,
 			['firstItem', 'secondItem'],
-			function() {
-				chaiRequest
-				.get('/todo/delete/0')
-				.end(function(err, res) {
-					console.log(res);
-					console.log(err);
-					res.should.have.status(200);
-					res.text.should.be.a('string');
-					//res.text.should.not.have.string('');
-				});
-				done();
-			}
+			() => {}	
 		);	
+		chaiRequest
+		.get('/todo/delete/0')
+		.end(function(err, res) {
+			res.should.have.status(200);
+			res.text.should.be.a('string');
+			res.text.should.not.have.string('firstItem');
+			res.text.should.have.string('secondItem');
+			done();
+		});
 	}); 
 	it('should replace the item with id in the list with the item passed as parameter editedtodo when /todo/edit/:id is called'); 
 	it('should redirect to /todo if page not found');
@@ -54,16 +52,16 @@ describe('To-Do Lists', function() {
 
 function addItems(chaiRequest, items, callback) {
 	if (items.length > 1) {
-		return addItem(items.pop(), addItems(chaiRequest, items, callback));
-	} else {
-		return addItem(items.pop(), callback);
-	}
-
-	function addItem(item, callback) {
-		return chaiRequest
+	   addItem(items.pop(), function() {addItems(chaiRequest, items, callback);});
+    } else {
+       addItem(items.pop(), callback);
+    }
+    function addItem(item, callback) {
+		chaiRequest
 			.post('/todo/add/')
 			.type('form')
 			.send({newtodo: item})
 			.end(callback);
 	}
 }
+
