@@ -1,0 +1,16 @@
+# Use the latest Node runtime: v8.1.3 as of the time of writing
+FROM node:8.1
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy files to the working directory
+ADD app.js package.json README.md /app/
+ADD views /app/views
+ADD test /app/test
+
+# Install any requirements
+RUN npm update && npm install
+
+# Run app.js when the container launches
+CMD ["npm", "test"]
